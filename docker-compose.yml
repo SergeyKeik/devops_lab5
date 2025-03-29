@@ -8,7 +8,7 @@ services:
     env_file:
       - ./.env
     volumes:
-      -./backend/backend.conf:/app/backend.conf
+      - ./backend/backend.conf:/app/backend.conf
     restart: unless-stopped
     depends_on:
       - db
@@ -20,7 +20,7 @@ services:
       - ./.env
       - ./frontend/src/.env
     volumes:
-      -./frontend/frontend.conf:/app/frontend.conf
+      - ./frontend/frontend.conf:/app/frontend.conf
     depends_on:
       - backend
     restart: unless-stopped
@@ -32,11 +32,15 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
   nginx:
-    image: nginx:alpine
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
+    env_file:
+      - ./.env
     ports:
       - "1234:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf:ro
     depends_on:
       - frontend
       - backend
